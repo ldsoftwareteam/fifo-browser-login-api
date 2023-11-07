@@ -65,7 +65,7 @@ def login():
     password = data['password']
 
     # Retrieve the user from the database
-    cursor.execute("SELECT * FROM users WHERE users = %s", (username,))
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
 
     if user:

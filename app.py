@@ -1,13 +1,36 @@
 import os
 from flask import Flask, request, jsonify
-
+import mysql.connector
 import bcrypt
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 # MySQL Database Configuration
+mysql_url = os.environ.get('JAWSDB_URL')
 
+# Parse the MySQL connection URL
+url_parts = mysql_url.split("://")
+if len(url_parts) == 2:
+    driver, connection_info = url_parts
+    user_pass, hostname_port_db = connection_info.split("@")
+    username, password = user_pass.split(":")
+    hostname, port_db = hostname_port_db.split(":")
+    port, database_name = port_db.split("/")
+else:
+    print("Invalid MySQL URL format")
+    exit(1)
 
+# Connect to the MySQL database
+
+db = mysql.connector.connect(
+    user=username,
+    password=password,
+    host=hostname,
+    port=int(port),
+    database=database_name
+)
+# Create a cursor object to interact with the database
+cursor = db.cursor()
 
 # @app.route('/signup', methods=['POST'])
 # def signup():
@@ -37,21 +60,21 @@ def home():
 
 @app.route('/login', methods=['POST'])
 def login():
-    # data = request.get_json()
-    # username = data['username']
-    # password = data['password']
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
 
     # Retrieve the user from the database
-    # cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-    # user = cursor.fetchone()
+    cursor.execute("SELECT * FROM users WHERE users = %s", (username,))
+    user = cursor.fetchone()
 
-    # if user:
-    #     stored_password = user[2]  # Assuming the hashed password is in the second column
-    #     # salt = user[2]  # Assuming the salt is in the third column
+    if user:
+        stored_password = user[2]  # Assuming the hashed password is in the second column
+        # salt = user[2]  # Assuming the salt is in the third column
 
-    #     # Check if the provided password matches the stored password using the retrieved salt
-    #     if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
-    #         return jsonify({'message': 'Login successful'}), 200
+        # Check if the provided password matches the stored password using the retrieved salt
+        if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+            return jsonify({'message': 'Login successful'}), 200
 
     return jsonify({'message': 'Invalid credentials'}), 401
 

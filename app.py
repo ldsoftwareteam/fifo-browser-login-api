@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import mysql.connector
 import bcrypt
@@ -5,15 +6,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 # MySQL Database Configuration
-# db = mysql.connector.connect(
-#     host='localhost',
-#     user='root',
-#     password='root',
-#     database='browseruser'
-# )
+db = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='root',
+    database='browseruser'
+)
 
 # Create a cursor object to interact with the database
-# cursor = db.cursor()
+cursor = db.cursor()
 
 # @app.route('/signup', methods=['POST'])
 # def signup():
@@ -42,25 +43,27 @@ def home():
 
 
 # @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-#     username = data['username']
-#     password = data['password']
+def login():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
 
-#     # Retrieve the user from the database
-#     cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-#     user = cursor.fetchone()
+    # Retrieve the user from the database
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    user = cursor.fetchone()
 
-#     if user:
-#         stored_password = user[2]  # Assuming the hashed password is in the second column
-#         # salt = user[2]  # Assuming the salt is in the third column
+    if user:
+        stored_password = user[2]  # Assuming the hashed password is in the second column
+        # salt = user[2]  # Assuming the salt is in the third column
 
-#         # Check if the provided password matches the stored password using the retrieved salt
-#         if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
-#             return jsonify({'message': 'Login successful'}), 200
+        # Check if the provided password matches the stored password using the retrieved salt
+        if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+            return jsonify({'message': 'Login successful'}), 200
 
-#     return jsonify({'message': 'Invalid credentials'}), 401
+    return jsonify({'message': 'Invalid credentials'}), 401
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+    # app.run(debug=True

@@ -73,7 +73,9 @@ def login():
         # salt = user[2]  # Assuming the salt is in the third column
 
         # Check if the provided password matches the stored password using the retrieved salt
-        if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+        # if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+        #     return jsonify({'message': 'Login successful'}), 200
+        if password == stored_password:
             return jsonify({'message': 'Login successful'}), 200
 
     return jsonify({'message': 'Invalid credentials'}), 401

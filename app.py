@@ -36,7 +36,7 @@ cursor = db.cursor()
 #     db.commit()
 
 #     return jsonify({'message': 'User registered successfully'}), 201
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET'])
 def home():
     return{"message":"wlcome the the browser login api"}
 

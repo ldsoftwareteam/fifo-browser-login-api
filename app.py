@@ -30,7 +30,7 @@ db = mysql.connector.connect(
     database=database_name
 )
 # Create a cursor object to interact with the database
-cursor = db.cursor()
+cursor = db.cursor(buffered=True)
 
 # @app.route('/signup', methods=['POST'])
 # def signup():

@@ -7,6 +7,8 @@ app = Flask(__name__)
 CORS(app)
 # MySQL Database Configuration
 mysql_url = os.environ.get('JAWSDB_URL')
+print(mysql_url)
+
 
 # Parse the MySQL connection URL
 url_parts = mysql_url.split("://")
@@ -58,7 +60,7 @@ def home():
     return{"message":"wlcome the the browser login api"}
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login/v2', methods=['POST'])
 def login():
     data = request.get_json()
     username = data['username']

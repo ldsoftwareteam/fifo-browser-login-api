@@ -112,7 +112,29 @@ def log_errors():
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({'message': 'An internal error occurred'}), 500
+    
+# Route to get error logs
+@app.route('/get-errors', methods=['GET'])
+def get_errors():
+    try:
+        cursor.execute("SELECT * FROM error_logs ORDER BY timestamp DESC")
+        rows = cursor.fetchall()
+        error_logs = []
+        for row in rows:
+            error_logs.append({
+                'id': row[0],
+                'timestamp': row[1].isoformat(),
+                'message': row[2],
+                'error': row[3],
+                'error_hash': row[4]
+            })
+        return jsonify({'error_logs': error_logs}), 200
 
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return jsonify({'message': 'An internal error occurred'}), 500
+    
+    
 # Login route for example
 @app.route('/login/v2', methods=['POST'])
 def login():
